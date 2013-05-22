@@ -54,7 +54,7 @@
  * @param arguments unused
  * @param options unused
  */
-- (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)createTabBar:(CDVInvokedUrlCommand*)command
 {
 	tabBar = [UITabBar new];
 	tabBar.autoresizingMask =  UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
@@ -87,15 +87,17 @@
  * - \c height integer indicating the height of the tab bar (default: \c 49)
  * - \c position specifies whether the tab bar will be placed at the \c top or \c bottom of the screen (default: \c bottom)
  */
-- (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)showTabBar:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
 	
 	// if we are calling this again when its shown, reset
 	if (!tabBar.hidden) {
 		return;
 	}
+    
+    NSDictionary *options   = [command.arguments objectAtIndex:0];
     
     CGFloat height = 0.0f;
     BOOL atBottom = YES;
@@ -163,10 +165,10 @@
  * @param arguments unused
  * @param options unused
  */
-- (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)hideTabBar:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
 	tabBar.hidden = YES;
 
 	NSNotification* notif = [NSNotification notificationWithName:@"CDVLayoutSubviewRemoved" object:tabBar];
@@ -203,15 +205,16 @@
  * @param options Options for customizing the individual tab item
  *  - \c badge value to display in the optional circular badge on the item; if nil or unspecified, the badge will be hidden
  */
-- (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)createTabBarItem:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
     
-    NSString  *name      = [arguments objectAtIndex:0];
-    NSString  *title     = [arguments objectAtIndex:1];
-    NSString  *imageName = [arguments objectAtIndex:2];
-    int tag              = [[arguments objectAtIndex:3] intValue];
+    NSString  *name      = [command.arguments objectAtIndex:0];
+    NSString  *title     = [command.arguments objectAtIndex:1];
+    NSString  *imageName = [command.arguments objectAtIndex:2];
+    int tag              = [[command.arguments objectAtIndex:3] intValue];
+    NSDictionary *options   = [command.arguments objectAtIndex:4];
     
     UITabBarItem *item = nil;    
     if ([imageName length] > 0) {
@@ -252,12 +255,13 @@
  * @param options Options for customizing the individual tab item
  *  - \c badge value to display in the optional circular badge on the item; if nil or unspecified, the badge will be hidden
  */
-- (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)updateTabBarItem:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
     
-    NSString  *name = [arguments objectAtIndex:0];
+    NSString  *name = [command.arguments objectAtIndex:0];
+    NSDictionary *options   = [command.arguments objectAtIndex:1];
     UITabBarItem *item = [tabBarItems objectForKey:name];
     if (item)
         item.badgeValue = [options objectForKey:@"badge"];
@@ -273,15 +277,17 @@
  * @see createTabBarItem
  * @see createTabBar
  */
-- (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)showTabBarItems:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
     
-    int i, count = [arguments count];
+
+    int i, count = [command.arguments count];
+    NSDictionary *options   = [command.arguments objectAtIndex:0];
     NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
-    for (i = 0; i < count; i++) {
-        NSString *itemName = [arguments objectAtIndex:i];
+    for (i = 1; i < count; i++) {
+        NSString *itemName = [command.arguments objectAtIndex:i];
         UITabBarItem *item = [tabBarItems objectForKey:itemName];
         if (item)
             [items addObject:item];
@@ -301,12 +307,12 @@
  * @see createTabBarItem
  * @see showTabBarItems
  */
-- (void)selectTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)selectTabBarItem:(CDVInvokedUrlCommand*)command
 {
     if (!tabBar)
-        [self createTabBar:nil withDict:nil];
+        [self createTabBar:nil];
     
-    NSString *itemName = [arguments objectAtIndex:0];
+    NSString *itemName = [command.arguments objectAtIndex:0];
     UITabBarItem *item = [tabBarItems objectForKey:itemName];
     if (item)
         tabBar.selectedItem = item;
@@ -326,12 +332,14 @@
 
 
 /*********************************************************************************/
-- (void)createToolBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)createToolBar:(CDVInvokedUrlCommand*)command
 {
     CGFloat height   = 45.0f;
     BOOL atTop       = YES;
 	UIBarStyle style = UIBarStyleBlack;
 	//UIBarStyle style = UIBarStyleDefault;
+    
+    NSDictionary *options   = [command.arguments objectAtIndex:0];
 
     NSDictionary* toolBarSettings = options;//[settings objectForKey:@"ToolBarSettings"];
     if (toolBarSettings) 
@@ -390,7 +398,7 @@
     [self.webView.superview addSubview:toolBar];
 }
 
-- (void)resetToolBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)resetToolBar:(CDVInvokedUrlCommand*)command
 {
 	NSLog(@"about to reset toolBarItems");
 	toolBarItems = nil;
@@ -408,10 +416,10 @@
  * @param arguments unused
  * @param options unused
  */
-- (void)hideToolBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)hideToolBar:(CDVInvokedUrlCommand*)command
 {
     if (!toolBar)
-        [self createToolBar:nil withDict:nil];
+        [self createToolBar:nil];
     toolBar.hidden = YES;
 	
 	NSNotification* notif = [NSNotification notificationWithName:@"CDVLayoutSubviewRemoved" object:toolBar];
@@ -422,12 +430,12 @@
 }
 
 
-- (void)setToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)setToolBarTitle:(CDVInvokedUrlCommand*)command
 {
     if (!toolBar)
-        [self createToolBar:nil withDict:nil];
+        [self createToolBar:nil];
     
-    NSString *title = [arguments objectAtIndex:0];
+    NSString *title = [command.arguments objectAtIndex:0];
     
        
     if (!toolBarTitle) {
@@ -476,11 +484,11 @@
  * @param {Object} [options] Options for customizing the individual tab item [no option available at this time - this is for future proofing]
  *  
  */
-- (void)createToolBarItem:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)createToolBarItem:(CDVInvokedUrlCommand*)command
 {
     if (!toolBar)
 	{
-        [self createToolBar:nil withDict:nil];
+        [self createToolBar:nil];
 	}
 	
 	if (!toolBarItems)
@@ -488,20 +496,20 @@
 		toolBarItems = [[NSMutableArray alloc] initWithCapacity:1];
 	}
 
-  NSString  *tagId      = [arguments objectAtIndex:0];
-  NSString  *title     = [arguments objectAtIndex:1];
+  NSString  *tagId      = [command.arguments objectAtIndex:0];
+  NSString  *title     = [command.arguments objectAtIndex:1];
 	NSString  *imageName = nil;
 
-	if (arguments.count > 2)
+	if (command.arguments.count > 2)
 	{
-		imageName = [arguments objectAtIndex:2];
+		imageName = [command.arguments objectAtIndex:2];
 	}
 	
 	NSString  *style;
 	
-	if (arguments.count >= 4)
+	if (command.arguments.count >= 4)
 	{
-		style	 = [arguments objectAtIndex:3];
+		style	 = [command.arguments objectAtIndex:3];
 	}
 	else 
 	{
@@ -648,11 +656,11 @@
 	[item release];
 }
 
-- (void)showToolBar:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)showToolBar:(CDVInvokedUrlCommand*)command
 {
     if (!toolBar)
 	{
-        [self createToolBar:nil withDict:nil];
+        [self createToolBar:nil];
 	}	
 	
 	[toolBar setItems:toolBarItems animated:NO];
@@ -677,8 +685,10 @@
 #pragma mark -
 #pragma mark ActionSheet
 
-- (void)createActionSheet:(NSArray*)arguments withDict:(NSDictionary*)options
+- (void)createActionSheet:(CDVInvokedUrlCommand*)command
 {
+    
+    NSDictionary *options   = [command.arguments objectAtIndex:4];
     
 	NSString* title = [options objectForKey:@"title"];
     
@@ -691,10 +701,10 @@
                                   otherButtonTitles:nil
                                   ];
 	
-	int count = [arguments count];
+	int count = [command.arguments count];
 	for(int n = 0; n < count; n++)
 	{
-		[ actionSheet addButtonWithTitle:[arguments objectAtIndex:n]];
+		[ actionSheet addButtonWithTitle:[command.arguments objectAtIndex:n]];
 	}
 	
 	if([options objectForKey:@"cancelButtonIndex"])

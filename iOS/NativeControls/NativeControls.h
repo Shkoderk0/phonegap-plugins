@@ -14,11 +14,7 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UITabBar.h>
 #import <UIKit/UIToolbar.h>
-#ifdef CORDOVA_FRAMEWORK
 #import <Cordova/CDVPlugin.h>
-#else
-#import "CDVPlugin.h"
-#endif
 
 @interface NativeControls : CDVPlugin <UITabBarDelegate, UIActionSheetDelegate> {
 	UITabBar* tabBar;
@@ -33,27 +29,27 @@
 
 /* Tab Bar methods
  */
-- (void)createTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)showTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)hideTabBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)showTabBarItems:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)createTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)updateTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)selectTabBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)createTabBar:(CDVInvokedUrlCommand*)command;
+- (void)showTabBar:(CDVInvokedUrlCommand*)command;
+- (void)hideTabBar:(CDVInvokedUrlCommand*)command;
+- (void)showTabBarItems:(CDVInvokedUrlCommand*)command;
+- (void)createTabBarItem:(CDVInvokedUrlCommand*)command;
+- (void)updateTabBarItem:(CDVInvokedUrlCommand*)command;
+- (void)selectTabBarItem:(CDVInvokedUrlCommand*)command;
 
 
 
 /* Tool Bar methods
  */
-- (void)createToolBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)resetToolBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)setToolBarTitle:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)createToolBarItem:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)showToolBar:(NSArray*)arguments withDict:(NSDictionary*)options;
-- (void)hideToolBar:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)createToolBar:(CDVInvokedUrlCommand*)command;
+- (void)resetToolBar:(CDVInvokedUrlCommand*)command;
+- (void)setToolBarTitle:(CDVInvokedUrlCommand*)command;
+- (void)createToolBarItem:(CDVInvokedUrlCommand*)command;
+- (void)showToolBar:(CDVInvokedUrlCommand*)command;
+- (void)hideToolBar:(CDVInvokedUrlCommand*)command;
 /* ActionSheet
  */
-- (void)createActionSheet:(NSArray*)arguments withDict:(NSDictionary*)options;
+- (void)createActionSheet:(CDVInvokedUrlCommand*)command;
 
 
 @end
